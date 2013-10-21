@@ -29,7 +29,8 @@ class Server:
 	def waitForClient(self): #checks if the client is done with the setup
 		data = ''
 		while len(self.addr) == 0 or data != 'done':
-			data, self.addr = self.sock.recvfrom(2048) # buffer size is 2048 bytes
+			data, self.addr = self.sock.recvfrom(4096) # buffer size is 4096 bytes
+			
 			if data != '':
 				dataList = self.toList(data)
 				data = dataList[0]
