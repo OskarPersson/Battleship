@@ -218,7 +218,7 @@ class Game:
 
 			if self.anythingLeft(self.p1.field.field) and self.anythingLeft(self.p2.field.field):
 				print 'Your field:\n'
-				print(self.printfield(self.p1.field.field))
+				print(self.printfield(self.p2.field.field))
 				print '\nEnemy field:\n'
 				print(self.printfield(self.p2.bombfield.field))
 				cell = self.selectCell(self.p2)
