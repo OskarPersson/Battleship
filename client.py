@@ -21,10 +21,6 @@ class Client:
 		l = ast.literal_eval(s)
 		return l
 
-	def toDict(self, s):
-		d = ast.literal_eval(s)
-		return d
-
 	def connect(self, ip, port):
 	
 		message = 'connect'
@@ -91,7 +87,7 @@ class Client:
 					else:
 						data = 'gameDone'
 						print dataList[1]
-						sys.exit()
+						sys.exit() #Exit the application
 
 
 

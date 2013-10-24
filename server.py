@@ -12,16 +12,20 @@ class Server:
 
 		self.ip = socket.gethostbyname(socket.gethostname()) #Get computer IP
 		self.port = 5005
+
+		#CREATES A SOCKET
 		self.sock = socket.socket(socket.AF_INET, 	# Internet
 	         					socket.SOCK_DGRAM) 	# UDP
+
 		self.sock.bind((self.ip, self.port))
 
-		self.addr = []
+		self.addr = [] #Client ip and port
+
 		self.connected = False
 		self.serverDone = False
 		self.clientDone = False
 
-		print("Your IP: " + self.ip + " and port: " + str(self.port))
+		print("Your IP: " + self.ip + " and port: " + str(self.port)) #Prints the computer's local ip and the port set above
 
 	def sendMessage(self, m):
 		self.sock.sendto(str(m), (self.addr[0], self.addr[1])) #sends a message to the client
@@ -32,7 +36,7 @@ class Server:
 			data, self.addr = self.sock.recvfrom(4096) # buffer size is 4096 bytes
 			
 			if data != '':
-				dataList = self.toList(data)
+				dataList = self.toList(data) #converts the received data to a list
 				data = dataList[0]
 				self.enemyField = dataList[1]
 				self.enemyName = dataList[2]
@@ -42,10 +46,6 @@ class Server:
 	def toList(self, s): #Converts string represantation of list to list object
 		l = ast.literal_eval(s)
 		return l
-
-	def toDict(self, s):
-		d = ast.literal_eval(s)
-		return d
 
 	def connect(self):
 
@@ -69,7 +69,6 @@ class Server:
 		g.p1 = g.newPlayer(1, g.ships[:], g.p1Field, g.p1BombField)
 		self.done = True
 		
-		raw_input('Press enter when you are done')
 		g.clear()
 
 		#if the client is not done with the setup,

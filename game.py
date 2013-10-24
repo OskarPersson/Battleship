@@ -18,9 +18,11 @@ rowlist = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 class Game:
 
 	def clear(self):
-		os.system('tput reset')
+		os.system('tput reset') #clears the terminal window, does not just add new lines but deletes whats been written
 
 	def __init__(self):
+
+		### CREATE PLAYER VARIABLES ###
 
 		self.p1 = ""
 		self.p2 = ""
@@ -34,8 +36,8 @@ class Game:
 
 		### CREATE SHIPS ###
 		self.ships = [];
-		self.ships.append(ship.Ship(5))
-		self.ships.append(ship.Ship(4))
+		'''self.ships.append(ship.Ship(5))
+		self.ships.append(ship.Ship(4))'''
 		self.ships.append(ship.Ship(3))
 		self.ships.append(ship.Ship(3))
 		self.ships.append(ship.Ship(2))
@@ -54,7 +56,7 @@ class Game:
 	    
 	def printfield(self, f):
 	    
-	    l = [' ', 'A','B','C','D','E','F','G','H','I','J']
+	    l = [' ', 'A','B','C','D','E','F','G','H','I','J'] #Creates the header
 	    spacing = ' '.join(['{:<2}'] * len(l)) #creates a string with len(l)-numbers of '{:<2}' with a space between each one
 	    text = spacing.format(*l) #prints the header (column names) with a spacing of 2
 
@@ -64,14 +66,15 @@ class Game:
 	    return text
 	def placeShips(self, player):
 	    counter = 1
-	    #player instructions
+	    
+	    ### PLAYER INSTRUCTIONS ###
 	    print player.name + ", you have 10x10 cells where you can place your ships,\n"
 	    print "Remember not to tell your opponent where you place your ships\n"
 	    print "Then you say which direction the ship is turned (right, left, up or down)\n"
 
-	    print(self.printfield(player.field.field))
+	    print(self.printfield(player.field.field)) #prints the player's field
 
-	    #place ships
+	    ### PLACE SHIPS ###
 	    for x in player.ships:
 	        column = ""
 	        row = ""
@@ -81,14 +84,15 @@ class Game:
 	        while self.columnExist(column) == False or row not in rowlist or cellBusy == True: #loop until the user enters a valid cell
 	            userInput = raw_input(player.name + ", in which cell (A-J)(1-10) do you want to place your " + nth[counter] + " ship?\n") #user input for cell
 	            if (len(userInput) >= 2): #user input must be atleast 2 characters
-	                column = userInput[0].upper()
+	                column = userInput[0].upper() #make userinput upper-case
 	                row = userInput[1]
-	                if len(userInput) >= 3: #since there is 10 rows, grab the third enter character too 
+	                if len(userInput) >= 3: #since there is 10 rows, grab the third entered character too (if any)
 	                    row += userInput[2]
 	            if(self.columnExist(column) and row in rowlist): #If the column and row is valid, check if the cell is busy
 	                cellBusy = pff[column][int(row)]
 	        
-	        row = int(row)
+	        row = int(row) #row is converted to integer here because now the entered row must be a valid integer
+
 	        newrow = row
 	        newcolumn = column
 	        
@@ -133,7 +137,7 @@ class Game:
 	        print(self.printfield(player.field.field))
 	        counter += 1
 
-	def newPlayer(self, n, ships, field, bombfield): #Creates a new player with the given player number, ships, field and bombfield
+	def newPlayer(self, n, ships, field, bombfield): #Creates a new player with the given ships, field and bombfield
 	    newName = raw_input("Player " + str(n) + ", what's your name?\n")
 	    while newName == "":
 	        newName = raw_input("Please, enter something\n")
@@ -143,7 +147,7 @@ class Game:
 	    self.placeShips(p)
 	    return p #Returns the player object
 
-	def anythingLeft(self, d): #Checks if there is any ships left
+	def anythingLeft(self, d): #Checks if there is any ships left on the given field
 	    newList = []
 	    def myprint(d):
 	        for k, v in d.iteritems():
@@ -154,39 +158,39 @@ class Game:
 	    myprint(d)
 	    return True in newList #Returns True if there is a True in the list, else return False
 
-	def selectCell(self, player):
+	def selectCell(self, player): #Lets the player select a cell to bomb
 		column = ""
 		row = ""
-		while self.columnExist(column) == False or row not in rowlist:
+		while self.columnExist(column) == False or row not in rowlist: #loop until given a valid cell
 			userInput = raw_input(player.name + ", in which cell (A-J)(1-10) do you want to bomb your enemy?\n")
 
-			if (len(userInput) < 2):
+			if (len(userInput) < 2): #Reset both values if the input is less than 2 characters
 				column = ""
 				row = ""
-			else:
-				column = userInput[0].upper()
+			else: #Set row and column
+				column = userInput[0].upper() #Convert input to upper-case
 				row = userInput[1]
-				if len(userInput) == 3:     
+				if len(userInput) == 3: #since there is 10 rows, grab the third entered character too (if any)
 					row += userInput[2]
 
 		return [column, row]
 
 	def bomb(self, player, enemy, column, row): #Gives the given player a chance to bomb the given enemy
 	    eff = enemy.field.field 
-	    self.result = ''
+	    self.result = '' #self.result, saves the latest result from a bombing
 
 	    row = int(row)
 	    if(eff[column][row] == True): #if there is a ship at the cell, set an x in the bombfield
-	        self.result = 'X'
-	        eff[column][row] = 'X'
-	        player.bombfield.field[column][row] = 'X'
+	        self.result = 'X' 
+	        eff[column][row] = 'X' #mark the enemy's ship field as hit 
+	        player.bombfield.field[column][row] = 'X' #mark the current players bombfiled as hit
+
 	        if self.anythingLeft(eff) == False: #Does the enemy have any ships left?
 	            self.result = player.name + " wins!"
-	            #sys.exit() #Exit the application
 	    else:
 	        self.result = 'O'
-	        eff[column][row] = '@'
-	        if player.bombfield.field[column][row] != 'X': #only mark as miss if you have not hit a ship there before
+	        eff[column][row] = '@' #mark the enemy's ship field as missed
+	        if player.bombfield.field[column][row] != 'X': #only mark as missed if you have not hit a ship there before
 	        	player.bombfield.field[column][row] = 'O'
 
 	def start(self):
@@ -196,7 +200,7 @@ class Game:
 			print '\nEnemy field:\n'
 			print(self.printfield(self.p1.bombfield.field))
 			cell = self.selectCell(self.p1)
-			self.bomb(self.p1, self.p2, cell[0], cell[1])
+			self.bomb(self.p1, self.p2, cell[0], cell[1]) #player 1 bombs player 2 at the cell given above
 			self.clear()
 
 			if self.result == 'X':
@@ -218,7 +222,7 @@ class Game:
 				print '\nEnemy field:\n'
 				print(self.printfield(self.p2.bombfield.field))
 				cell = self.selectCell(self.p2)
-				self.bomb(self.p2, self.p1, cell[0], cell[1])
+				self.bomb(self.p2, self.p1, cell[0], cell[1]) #player 2 bombs player 1 at the cell given above
 				self.clear()
 
 				if self.result == 'X':
